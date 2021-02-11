@@ -50,6 +50,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
 	fmt.Fprintf(w, "%v", s)
 }
 
