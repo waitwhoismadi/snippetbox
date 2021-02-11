@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -12,9 +13,10 @@ import (
 )
 
 type application struct {
-	errorLog *log.Logger
-	infoLog  *log.Logger
-	snippets *postgresql.SnippetModel
+	errorLog      *log.Logger
+	infoLog       *log.Logger
+	snippets      *postgresql.SnippetModel
+	templateCache map[string]*template.Template
 }
 
 func main() {
@@ -40,19 +42,16 @@ func main() {
 	}
 	defer conn.Close()
 
-	var greeting string
-	err = conn.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
+	templateCache, err := newTemplateCache("./ui/html/")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-		os.Exit(1)
+		errorLog.Fatal(err)
 	}
 
-	fmt.Println(greeting)
-
 	app := &application{
-		errorLog: errorLog,
-		infoLog:  infoLog,
-		snippets: &postgresql.SnippetModel{DB: conn},
+		errorLog:      errorLog,
+		infoLog:       infoLog,
+		snippets:      &postgresql.SnippetModel{DB: conn},
+		templateCache: templateCache,
 	}
 
 	srv := &http.Server{
