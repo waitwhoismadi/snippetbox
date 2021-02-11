@@ -13,13 +13,13 @@ import (
 
 type application struct {
 	errorLog *log.Logger
-	infoLog *log.Logger
+	infoLog  *log.Logger
 	snippets *postgresql.SnippetModel
 }
 
 func main() {
 
-	username := "modi"
+	username := "postgres"
 	password := "admin123"
 	host := "localhost"
 	port := "5432"
@@ -51,14 +51,14 @@ func main() {
 
 	app := &application{
 		errorLog: errorLog,
-		infoLog: infoLog,
+		infoLog:  infoLog,
 		snippets: &postgresql.SnippetModel{DB: conn},
 	}
 
 	srv := &http.Server{
-		Addr: *addr,
+		Addr:     *addr,
 		ErrorLog: errorLog,
-		Handler: app.routes(),
+		Handler:  app.routes(),
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)
