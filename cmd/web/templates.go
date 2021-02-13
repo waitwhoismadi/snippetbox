@@ -3,12 +3,15 @@ package main
 import (
 	"html/template"
 	"path/filepath"
+	"snippetBoxReborn/pkg/forms"
 	"snippetBoxReborn/pkg/models"
 	"time"
 )
 
 type templateData struct {
 	CurrentYear int
+	Flash       string
+	Form        *forms.Form
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
 }
